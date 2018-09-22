@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using Mediatr.ConsoleApp.Command;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Mediatr.ConsoleApp
@@ -14,14 +16,15 @@ namespace Mediatr.ConsoleApp
 
             IServiceCollection services = new ServiceCollection();
             
-            var provider = services
-                .AddLogging()
-                .BuildServiceProvider();
-
+            
             //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Timer<,>));
             //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Logging<,>));
             //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Validator<,>));
             services.AddMediatR(typeof(Program).GetTypeInfo().Assembly);
+
+            var provider = services
+                .AddLogging()
+                .BuildServiceProvider();
 
             provider
                 .GetService<ILoggerFactory>()
@@ -34,10 +37,17 @@ namespace Mediatr.ConsoleApp
 
             logger.LogDebug("All done!");
 
-            foreach (var service in services)
-            {
-                Console.WriteLine(service.ServiceType + " - " + service.ImplementationType);
-            }
+            //foreach (var service in services)
+            //{
+            //    Console.WriteLine(service.ServiceType + " - " + service.ImplementationType);
+            //}
+
+
+            var mediator = provider.GetService<IMediator>();
+            var response = mediator.Send(new Ping()).Result;
+            Console.WriteLine(response); // "Pong"
+
+            mediator.Publish(new PingN());
 
             Console.ReadKey();
         }
