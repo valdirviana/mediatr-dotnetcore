@@ -1,4 +1,5 @@
 ﻿using Mediatr.ConsoleApp.Command;
+using Mediatr.ConsoleApp.CommandHandler;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,9 +16,9 @@ namespace Mediatr.ConsoleApp
             Console.WriteLine("Hello World!");
 
             IServiceCollection services = new ServiceCollection();
-            
-            
-            //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Timer<,>));
+
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Logging<,>));
             //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Validator<,>));
             services.AddMediatR(typeof(Program).GetTypeInfo().Assembly);
