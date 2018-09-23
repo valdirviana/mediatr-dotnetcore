@@ -7,5 +7,6 @@ namespace Mediatr.ConsoleApp.Command
 {
     public class Ping : IRequest<string>
     {
+        public string Message { get; set; }
     }
 }

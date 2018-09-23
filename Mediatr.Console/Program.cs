@@ -1,6 +1,7 @@
 ﻿using Mediatr.ConsoleApp.Command;
 using Mediatr.ConsoleApp.CommandHandler;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,11 +18,26 @@ namespace Mediatr.ConsoleApp
 
             IServiceCollection services = new ServiceCollection();
 
-
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Logging<,>));
-            //serviceProvider.AddScoped(typeof(IPipelineBehavior<,>), typeof(Validator<,>));
             services.AddMediatR(typeof(Program).GetTypeInfo().Assembly);
+
+
+            // Registers generic behaviors
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+
+            // Pre-processors
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
+
+
+            // Post-processors
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+
+            // Registers command validator
+
+
+
+
+
 
             var provider = services
                 .AddLogging()
@@ -35,20 +51,14 @@ namespace Mediatr.ConsoleApp
                 .CreateLogger<Program>();
             logger.LogDebug("Starting application");
 
-
             logger.LogDebug("All done!");
-
-            //foreach (var service in services)
-            //{
-            //    Console.WriteLine(service.ServiceType + " - " + service.ImplementationType);
-            //}
 
 
             var mediator = provider.GetService<IMediator>();
             var response = mediator.Send(new Ping()).Result;
             Console.WriteLine(response); // "Pong"
 
-            mediator.Publish(new PingN());
+            //mediator.Publish(new PingN());
 
             Console.ReadKey();
         }

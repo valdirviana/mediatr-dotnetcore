@@ -1,5 +1,6 @@
 ﻿using Mediatr.ConsoleApp.Command;
 using MediatR;
+using MediatR.Pipeline;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,15 +13,10 @@ namespace Mediatr.ConsoleApp.CommandHandler
     {
         public Task<string> Handle(Ping request, CancellationToken cancellationToken)
         {
-            return Task.FromResult("Pong1");
+            // 3
+            return Task.FromResult("Pong 3");
         }
     }
 
-    public class Ping2Handler : IRequestHandler<Ping, string>
-    {
-        public Task<string> Handle(Ping request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult("Pong2");
-        }
-    }
+
 }
